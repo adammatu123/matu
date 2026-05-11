@@ -1,0 +1,52 @@
+============================================================
+AKO FUNGUJE BINÁRNA LOGIKA (POLOPATE)
+============================================================
+
+1. OPERÁCIA "AND" (Logický súčin)
+---------------------------------
+Použitie: Výpočet Adresy siete.
+Pravidlo: Výsledok je 1 LEN VTEDY, ak sú OBA bity nad sebou 1.
+(Predstav si to ako filter: nula v maske nepustí nič, jednotka pustí pôvodnú hodnotu).
+
+PRÍKLAD:
+IP časť:    1 0 1 0  (pôvodné dáta)
+Maska:      1 1 0 0  (filter)
+-------------------
+VÝSLEDOK:   1 0 0 0  (len prvá jednotka "prešla" cez masku)
+
+2. OPERÁCIA "NOT" (Negácia / Inverzia)
+--------------------------------------
+Použitie: Príprava masky pre výpočet Broadcastu.
+Pravidlo: Všetko sa otočí naopak. Z 0 je 1, z 1 je 0.
+
+PRÍKLAD (Negujeme masku):
+Pôvodná:    1 1 1 1 1 1 1 1 . 0 0 0 0 0 0 0 0
+Znegovaná:  0 0 0 0 0 0 0 0 . 1 1 1 1 1 1 1 1
+
+3. OPERÁCIA "OR" (Logický súčet)
+--------------------------------
+Použitie: Výpočet Broadcastu (použije sa IP + znegovaná maska).
+Pravidlo: Výsledok je 1, ak je ASPOŇ JEDNA z hodnôt 1.
+(Stačí jedna jednotka a výsledok je "zapnutý").
+
+PRÍKLAD:
+IP časť:    1 0 1 0
+Neg. Maska: 0 0 1 1
+-------------------
+VÝSLEDOK:   1 0 1 1  (všetky jednotky z oboch riadkov sa sčítali do výsledku)
+
+============================================================
+
+============================================================
+
+KROK 1: Chcem ADRESU SIETE?
+-> Vezmem IP, vezmem MASKU a urobím AND (len kde sú dve jednotky, píšem 1).
+
+KROK 2: Chcem BROADCAST?
+-> Najprv otočím masku (NOT - z 1 spravím 0 a naopak).
+-> Potom vezmem IP a túto OTOČENÚ masku a urobím OR (kde je aspoň jedna 1, píšem 1).
+
+KROK 3: Prevod späť
+-> Binárny výsledok (napr. 11000000) hodím do kalkulačky alebo sčítam podľa 
+   pomôcky (128+64...) a mám desiatkové číslo (192).
+============================================================
