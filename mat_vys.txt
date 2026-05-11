@@ -1,5 +1,5 @@
 ============================================================
-SIEŤOVÉ VÝPOČTY - MATURITNÝ CHEAT SHEET
+SIEŤOVÉ VÝPOČTY
 ============================================================
 
 1. ZÁKLADNÉ POJMY
@@ -43,13 +43,5 @@ AND (Násobenie):       OR (Súčet):           NEGÁCIA (Opačne):
 1 AND 1 = 1           1 OR 1 = 1            NOT 1 = 0
 1 AND 0 = 0           1 OR 0 = 1            NOT 0 = 1
 0 AND 0 = 0           0 OR 0 = 0
-
-4. TIP NA MATURITU
-------------------
-Ak máš masku 255.255.255.0 (/24):
-- Prvé tri čísla IP adresy ostávajú rovnaké.
-- Sieť má na konci .0
-- Broadcast má na konci .255
-- Použiteľné sú .1 až .254
 ============================================================
 
