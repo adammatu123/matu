@@ -1,0 +1,52 @@
+============================================================
+PROGRAMOVANIE APLIKÁCIE (PYTHON & TKINTER)
+============================================================
+
+1. ŠTRUKTÚRA A OKNO (TKINTER)
+-----------------------------
+* Moduly: Používa sa 'tkinter' (ako tk) pre základ a 'ttk' pre modernejší vzhľad.
+* Inštancia okna: root = tk.Tk().
+* Titulok: root.title("Výpočet siete").
+* Rozmery: root.geometry("500x600").
+* Fixná veľkosť: root.resizable(False, False) – používateľ nemôže meniť okno.
+* Slučka: tk.mainloop() – drží aplikáciu spustenú.
+
+2. GUI PRVKY (WIDGETY) A LAYOUT
+-------------------------------
+* ttk.Label: Zobrazuje text. 
+  Príklad: nameLabel = ttk.Label(root, text="Názov").
+* ttk.Entry: Vstupné pole pre IP a Masku.
+  Príklad získania dát: ip = adressInputEntry.get().
+* ttk.Button: Tlačidlo na spustenie výpočtu.
+  Príklad: Button(root, text="Štart", command=funkcia_vypoctu).
+* Umiestnenie (place): Presné súradnice v pixeloch.
+  Príklad: widget.place(x=250, y=50, anchor="center").
+
+3. INTERAKTIVITA (EVENT BINDING)
+--------------------------------
+* Metóda .bind(): Spája udalosť s funkciou.
+* Udalosť <FocusIn>: Nastane, keď používateľ klikne do poľa.
+  Príklad: adressInputEntry.bind("<FocusIn>", lambda: adressInputEntry.delete(0, 'end'))
+  (Tento kód vymaže nápis "IP ADRESA" hneď po kliknutí do poľa) [cite: 177].
+
+4. PROGRAMOVÁ LOGIKA A BITOVÉ OPERÁCIE
+--------------------------------------
+* [cite_start]Triedy (Classes): Kód je rozdelený na appInput (vstupy), networkInfo (výpočty) a appOutput (výsledky).
+* Prevod IP na číslo (ToNum):
+  1. split('.'): Rozdelí IP "192.168.1.1" na zoznam ['192', '168', '1', '1'].
+  2. << 8: Bitový posun doľava. Spája oktety do jedného 32-bitového čísla.
+* Bitové operátory v kóde:
+  - & (AND): networkAdress = binaryAdress & binaryMask.
+  - | (OR): broadcastAdress = binaryAdress | invMask.
+  - ~ (NOT): invMask = ~binaryMask & 0xFFFFFFFF (Negácia masky).
+* Spätný prevod (ToAdd):
+  - >>: Bitový posun doprava na získanie pôvodných oktetov.
+  - '.'.join(adress): Spojenie čísel späť do formátu s bodkami.
+
+5. ŠTÝLOVANIE (ttk.Style)
+-------------------------
+* Umožňuje nastaviť font a veľkosť pre všetky tlačidlá naraz.
+  Príklad:
+  style = ttk.Style()
+  style.configure("TButton", font=("Aptos", 15, "bold")).
+============================================================
