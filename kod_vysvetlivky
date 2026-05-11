@@ -1,0 +1,137 @@
+============================================================
+KOMPLETNÝ KÓD APLIKÁCIE S VYSVETLIVKAMI (main.py)
+============================================================
+
+import tkinter as tk
+from tkinter import ttk
+
+# --- 1. INICIALIZÁCIA HLAVNÉHO OKNA ---
+# Vytvorenie objektu okna a nastavenie jeho vlastností
+root = tk.Tk()
+root.title("Výpočet siete")
+root.geometry("500x600")
+root.resizable(False, False) # Používateľ nemôže meniť rozmery okna
+
+class appInput:
+    # Funkcia pre vykreslenie hlavného nadpisu aplikácie
+    def appLabel():
+        nameLabel = ttk.Label(root)
+        nameLabel.place(x=500/2, y=50, width=400, anchor="center")
+        nameLabel.config(font="Aptos 40 bold", text="INFORMÁCIE O SIETI")
+
+    # Vytvorenie vstupného poľa pre IP adresu
+    def AdressInput():
+        global adressInputEntry # Premenná prístupná pre ostatné funkcie
+
+        adressInputEntry = ttk.Entry(root)
+        adressInputEntry.place(x=(500-400)/2, y=100, width=400, height=40, anchor="nw")
+        adressInputEntry.config(font="Aptos 20 bold", foreground="grey")
+        adressInputEntry.insert(0, "IP ADRESA") # Placeholder text
+        
+        # Event bind: Po kliknutí do poľa sa text vymaže a zmení na čierny
+        adressInputEntry.bind("<FocusIn>", lambda args : ( 
+            adressInputEntry.delete(0, 'end'), 
+            adressInputEntry.config(foreground="black")))
+
+    # Vytvorenie vstupného poľa pre masku podsiete (identické s IP)
+    def MaskInput():
+        global maskInputEntry
+
+        maskInputEntry = ttk.Entry(root)
+        maskInputEntry.place(x=(500-400)/2, y=150, width=400, height=40, anchor="nw")
+        maskInputEntry.config(font="Aptos 20 bold", foreground="grey")
+        maskInputEntry.insert(0, "MASKA SIETE")
+        maskInputEntry.bind("<FocusIn>", lambda args : ( 
+            maskInputEntry.delete(0, 'end'), 
+            maskInputEntry.config(foreground="black")))
+
+    # Definovanie funkčných tlačidiel
+    def Buttons():
+        buttonStyle = ttk.Style() # Nastavenie štýlu pre modernejšie GUI
+        buttonStyle.configure("TButton", font="Aptos 15 bold")
+
+        # Tlačidlo pre výpočet - odkazuje na funkciu CalculateNetworkInfo
+        infoButton = ttk.Button(root, text="ZOBRAZIŤ INFO", style="TButton", 
+                                command=networkInfo.CalculateNetworkInfo)
+        infoButton.place(x=500/2, y=210, width=400, anchor="center")
+
+        # Tlačidlo pre vypnutie aplikácie
+        quitButton = ttk.Button(root, text="UKONČIŤ", style="TButton", 
+                                command=root.destroy)
+        quitButton.place(x=500/2, y=240, width=400, anchor="center")
+
+    # Spustenie vykreslenia všetkých vstupných prvkov
+    def CreateInput():
+        appInput.appLabel()
+        appInput.AdressInput()
+        appInput.MaskInput()
+        appInput.Buttons()
+
+class networkInfo:
+    # --- JADRO VÝPOČTOVEJ LOGIKY ---
+    def CalculateNetworkInfo():
+        # Prevod textových vstupov na 32-bitové čísla
+        binaryAdress = networkInfo.ToNum(adressInputEntry.get())
+        binaryMask = networkInfo.ToNum(maskInputEntry.get())
+        
+        # Výpočet negovanej masky (NOT) pre broadcast
+        invMask = ~binaryMask & 0xFFFFFFFF
+
+        # Bitové operácie na pozadí pre sieťové parametre
+        networkAdress = binaryAdress & binaryMask      # Operácia AND
+        broadcastAdress = binaryAdress | invMask       # Operácia OR
+        firstHost = networkAdress + 1                  # Prvá použiteľná IP
+        lastHost = broadcastAdress - 1                 # Posledná použiteľná IP
+        cidr = str(bin(binaryMask)).count('1')         # Spočíta jednotky pre CIDR
+        adressSize = 2**(32 - cidr)                    # Celková veľkosť siete
+        usableAdresses = adressSize - 2                # Počet PC (mínus sieť a BC)
+
+        # Odoslanie výsledkov do triedy pre zobrazenie
+        appOutput.outputLabel(cidr, adressSize, usableAdresses, 
+                              networkInfo.ToAdd(networkAdress), 
+                              networkInfo.ToAdd(broadcastAdress), 
+                              networkInfo.ToAdd(firstHost), 
+                              networkInfo.ToAdd(lastHost))
+        
+    # Algoritmus: Prevod IP reťazca (192.168...) na jedno veľké desiatkové číslo
+    def ToNum(adress):
+        adress = adress.split('.') # Rozdelenie stringu podľa bodiek
+        number = 0
+        for octet in adress:
+            # Bitový posun doľava o 8 miest pre každý oktet
+            number = (number << 8) + int(octet)
+        return int(number)
+    
+    # Algoritmus: Prevod 32-bitového čísla späť na formát IP adresy s bodkami
+    def ToAdd(number):
+        adress = []
+        bits = [24, 16, 8] # Binárne pozície oktetov
+        for octet in bits:
+            # Posun doprava a izolácia 8 bitov pomocou masky 0xFF
+            adress.append(f"{str((number >> octet) & 0xFF)}.")
+        adress.append(f"{str(number & 0xFF)}") # Posledný oktet bez bodky
+        return ''.join(adress)
+    
+class appOutput:
+    # Výpis vypočítaných výsledkov priamo do GUI aplikácie
+    def outputLabel(cidr, adressSize, usableAdresses, networkAdress, 
+                    broadcastAdress, firstHost, lastHost):
+        outputLabel = ttk.Label(root)
+        outputLabel.place(x=500/2, y=420, width=450, anchor="center")
+        # Formátovaný výpis (f-string) pre prehľadnosť
+        outputLabel.config(font="Aptos 20 bold", text=
+                           (f"DETAILY SIETE\n\n"
+                           f"IP ADRESA: {adressInputEntry.get()}\n"
+                           f"MASKA PODSIETE: {maskInputEntry.get()}\n"
+                           f"CIDR NOTÁCIA: {cidr}\n\n"
+                           f"ADRESA SIETE: {networkAdress}\n"
+                           f"BROADCAST ADRESA: {broadcastAdress}\n"
+                           f"PRVÁ POUŽITEĽNÁ IP: {firstHost}\n"
+                           f"POSLEDNÁ POUŽITEĽNÁ IP: {lastHost}\n"
+                           f"POUŽITEĽNÉ ADRESY: {usableAdresses}\n"
+                           f"VEĽKOSŤ SIETE: {adressSize}"))
+
+# --- SPUSTENIE APLIKÁCIE ---
+appInput.CreateInput() # Príprava vstupov
+tk.mainloop() # Spustenie nekonečnej slučky aplikácie
+============================================================
