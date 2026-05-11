@@ -1,0 +1,55 @@
+============================================================
+SIEŤOVÉ VÝPOČTY - MATURITNÝ CHEAT SHEET
+============================================================
+
+1. ZÁKLADNÉ POJMY
+-----------------
+* IP ADRESA: 4 čísla (0-255) oddelené bodkami. Identifikuje zariadenie.
+* MASKA PODSIETE: Určuje rozsah siete (čo je sieť a čo host).
+* CIDR NOTÁCIA: Skratka masky (napr. /24 znamená 24 jednotiek v maske).
+* ADRESA SIETE: Prvá adresa v rozsahu (nedá sa priradiť PC). Končí zvyčajne .0 pri /24.
+* BROADCAST ADRESA: Posledná adresa v rozsahu. Slúži na hromadné vysielanie.
+* POUŽITEĽNÉ IP: Všetky adresy medzi Sieťou a Broadcastom.
+
+2. RÝCHLE VÝPOČTY (PRÍKLAD: 192.168.1.100, Maska: 255.255.255.0 /24)
+------------------------------------------------------------------
+A. ADRESA SIETE:
+   - Postup: Binárna IP "AND" Binárna Maska.
+   - Výsledok: 192.168.1.0
+
+B. BROADCAST ADRESA:
+   - Postup: Binárna IP "OR" Negovaná Maska.
+   - Výsledok: 192.168.1.255
+
+C. PRVÁ POUŽITEĽNÁ IP:
+   - Vzorec: Adresa siete + 1
+   - Výsledok: 192.168.1.1
+
+D. POSLEDNÁ POUŽITEĽNÁ IP:
+   - Vzorec: Broadcast adresa - 1
+   - Výsledok: 192.168.1.254
+
+E. VEĽKOSŤ SIETE (Počet všetkých adries):
+   - Vzorec: 2^(32 - CIDR)
+   - Príklad pre /24: 2^(32-24) = 2^8 = 256 adries.
+
+F. POČET POUŽITEĽNÝCH ADRES (Hostov):
+   - Vzorec: (Veľkosť siete) - 2
+   - Príklad pre /24: 256 - 2 = 254 zariadení.
+
+3. LOGICKÉ OPERÁCIE (PRE BINÁRNY VÝPOČET)
+-----------------------------------------
+AND (Násobenie):       OR (Súčet):           NEGÁCIA (Opačne):
+1 AND 1 = 1           1 OR 1 = 1            NOT 1 = 0
+1 AND 0 = 0           1 OR 0 = 1            NOT 0 = 1
+0 AND 0 = 0           0 OR 0 = 0
+
+4. TIP NA MATURITU
+------------------
+Ak máš masku 255.255.255.0 (/24):
+- Prvé tri čísla IP adresy ostávajú rovnaké.
+- Sieť má na konci .0
+- Broadcast má na konci .255
+- Použiteľné sú .1 až .254
+============================================================
+
