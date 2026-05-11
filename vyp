@@ -1,0 +1,54 @@
+============================================================
+MATURITNÝ CHEAT SHEET: BINÁRNE VÝPOČTY SIETÍ
+============================================================
+
+1. POMÔCKA PRE PREVOD (DECI -> BIN)
+-----------------------------------
+Hodnoty bitov v oktete:
+128 | 64 | 32 | 16 | 8 | 4 | 2 | 1
+-----------------------------------
+Príklad (192): 128+64 = 11000000
+Príklad (168): 128+32+8 = 10101000
+Príklad (100): 64+32+4 = 01100100
+
+2. LOGICKÉ OPERÁCIE (Bit po bite)
+---------------------------------
+AND (Sieť):     OR (Broadcast):    NOT (Maska):
+1 & 1 = 1       1 | 1 = 1          !1 = 0
+1 & 0 = 0       1 | 0 = 1          !0 = 1
+0 & 0 = 0       0 | 0 = 0
+
+3. ALGORITMUS VÝPOČTU
+---------------------
+ZADANÉ: IP a Maska (napr. 192.168.1.10 a 255.255.255.0)
+
+A. ADRESA SIETE
+   1. Preveď IP a Masku na binárne.
+   2. Vykonaj: (Binárna IP) AND (Binárna Maska).
+   3. Výsledok preveď späť na desiatkové čísla.
+
+B. BROADCAST ADRESA
+   1. Zneguj binárnu masku (NOT Maska).
+   2. Vykonaj: (Binárna IP) OR (Negovaná Maska).
+   3. Výsledok preveď na desiatkové čísla.
+
+C. ROZSAH A KAPACITA
+   1. Prvá použiteľná IP: (Adresa siete) + 1 na konci.
+   2. Posledná použiteľná IP: (Broadcast) - 1 na konci.
+   3. CIDR: Počet '1' v binárnej maske.
+   4. Počet adries celkom: 2^(32 - CIDR).
+   5. Počet hostov: [2^(32 - CIDR)] - 2.
+
+4. TABUĽKA BEŽNÝCH MASIEK (Rýchla kontrola)
+-------------------------------------------
+CIDR | Maska           | Počet Hostov
+-------------------------------------
+/30  | 255.255.255.252 | 2
+/29  | 255.255.255.248 | 6
+/28  | 255.255.255.240 | 14
+/27  | 255.255.255.224 | 30
+/26  | 255.255.255.192 | 62
+/25  | 255.255.255.128 | 126
+/24  | 255.255.255.0   | 254
+/16  | 255.255.0.0     | 65 534
+============================================================
