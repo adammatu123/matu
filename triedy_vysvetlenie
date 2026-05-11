@@ -1,0 +1,50 @@
+============================================================
+PROGRAMOVANIE APLIKACIE - DOKUMENTACIA (main.py)
+============================================================
+
+1. ZAKLADNA KONFIGURACIA (TKINTER)
+---------------------------------
+* Modul tkinter: Zakladna kniznica pre tvorbu okien.
+* Modul ttk: Modernizovane verzie widgetov (tento projekt ich vyuziva pre krajsi vzhlad).
+* root = tk.Tk(): Inicializacia hlavneho okna.
+* root.geometry("500x600"): Nastavenie pevnej velkosti okna.
+* root.resizable(False, False): Zakaz zmeny velkosti, aby sa nerozbil dizajn.
+
+2. TRIEDA appInput (VSTUPY A GUI)
+---------------------------------
+* AdressInput & MaskInput: Vyuzivaju ttk.Entry na zadavanie dat.
+* Placeholder logika: 
+  - Pomocou .insert(0, "IP ADRESA") sa vlozi textovy navod.
+  - Pomocou .bind("<FocusIn>", ...) sa tento text automaticky vymaze,
+    ked pouzivatel klikne do pola, a zmeni sa farba pisma na ciernu.
+* Buttons: 
+  - Tlacidlo "ZOBRAZIT INFO" spusta funkciu CalculateNetworkInfo.
+  - Tlacidlo "UKONCIT" spusta root.destroy pre vypnutie programu.
+
+3. TRIEDA networkInfo (VYPOCTOVE JADRO)
+---------------------------------------
+* ToNum(adress): Algoritmus na prevod IP adresy na cislo.
+  - .split('.'): Rozdeli IP na oktety.
+  - (number << 8) + int(octet): Bitovy posun dolava. Kazdy oktet
+    sa posunie o 8 miest, aby sa vytvorilo jedno 32-bitove cislo.
+* CalculateNetworkInfo:
+  - invMask = ~binaryMask & 0xFFFFFFFF: Negacia masky (NOT) pre vypocet broadcastu.
+  - networkAdress = binaryAdress & binaryMask: Bitovy AND pre adresu siete.
+  - broadcastAdress = binaryAdress | invMask: Bitovy OR pre broadcast.
+  - cidr = bin(binaryMask).count('1'): Spocitanie jednotiek v binarnom zapise masky.
+* ToAdd(number): Algoritmus na prevod cisla spat na IP.
+  - (number >> octet) & 0xFF: Bitovy posun doprava na ziskanie povodnych oktetov.
+
+4. TRIEDA appOutput (VYSTUP)
+----------------------------
+* outputLabel: Dynamicky vytvara vypis vsetkych vypocitanych udajov.
+* F-strings: Vyuziva formatovany vypis textu f"TEXT {premenna}".
+* 
+: Zabezpecuje odriadkovanie pre prehladnost vysledkov.
+
+5. SPUSTENIE (MAIN LOOP)
+------------------------
+* appInput.CreateInput(): Vola funkciu na vykreslenie vsetkych prvkov.
+* root.mainloop(): Nekonecna slucka, ktora drzi okno otvorene a reaguje
+  na interakcie pouzivatela.
+============================================================
